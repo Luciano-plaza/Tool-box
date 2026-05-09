@@ -2,7 +2,7 @@ import string
 import random
 import hashlib
 import os
-
+import socket
 
 class colors:
         HEADER = '\033[95m'
@@ -125,7 +125,23 @@ def password_generator(long_passwd):
 
 #########################################
 
+def port_scanner(host, port):
 
+    soc = socket.socket()
+
+    try:
+
+        soc.connect(host, port)
+
+        soc.settimeout(0.3)
+
+    except:
+        
+        return False
+
+    else:
+
+        return True
 
 #########################################
 
@@ -190,7 +206,21 @@ if input_tool_mode == '1':
 
 elif input_tool_mode == '2':
 
-    print(f"\n{colors.HEADER}                                   Soon                        {colors.ENDC}")
+    print(f"\n{colors.HEADER}                                   Port Scanner                        {colors.ENDC}")
+
+    print(f"\n{colors.HEADER}               This toll will help you to make a basic port scanning                        {colors.ENDC}")
+
+    host = input("Enter the host: ")
+
+    for port in range(1, 1024):
+
+        if port_scanner(host, port):
+            
+            print(f"{colors.OKGREEN}[+] {host}:{port} is open      {colors.ENDC}")
+        
+        else:
+            
+            print(f"{colors.OKGREEN}[!] {host}:{port} is closed    {colors.ENDC}", end="\r")
 
 
 elif input_tool_mode == '3':
