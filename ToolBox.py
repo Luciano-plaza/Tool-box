@@ -2,7 +2,6 @@ import string
 import random
 import hashlib
 import os
-from urllib.request import urlopen
 
 
 class colors:
