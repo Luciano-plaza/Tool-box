@@ -125,23 +125,98 @@ def password_generator(long_passwd):
 
 #########################################
 
-def port_scanner(host, port):
+def host_sanitization (host):
 
-    soc = socket.socket()
+    octet = 0
+    
+    while octet != 4:
+    
+        try:
 
-    try:
-
-        soc.connect(host, port)
-
-        soc.settimeout(0.3)
-
-    except:
+            # Verification variables 1.1.1.1
         
-        return False
+            count_dots = host.count(".")
+            check_host = host.split(".")
+            check_len = len(check_host)
+            
+            # Error type alarm
 
-    else:
+            int(check_host[octet])
 
-        return True
+            # Checking octet per octet
+
+            if count_dots == 3 and check_len == 4 and int(check_host[octet]) in range(225):
+
+                    octet = octet + 1
+
+            else:
+
+                octet = 0
+
+                host = input(colors.FAIL + "\nInvalid input" + colors.ENDC + ". Please enter a valid IP address: ")
+            
+        except ValueError:
+
+            octet = 0
+
+            host = input(colors.FAIL + "\nInvalid input" + colors.ENDC + ". Please enter a valid IP: ")
+
+
+def port_sanitization(port):
+
+    port_validate = False
+
+    while not port_validate:
+
+        try:
+            
+            port_range = '-' in port
+            port_checker = port.split('-')
+
+            if port_range:
+
+                start_port = port_checker[0]
+                end_port = port_checker[1]
+                
+                if len(port_checker) == 2 and int(start_port) in range(65535) and int(end_port) in range(65535) and int(start_port) < int(end_port):
+
+                    port_validate = True
+            
+                else:
+
+                    port = input(colors.FAIL + "\nInvalid input" + colors.ENDC + ". Please enter a valid port or port range (default: 0-65535): ")
+
+            elif len(port) == 0:
+
+                port_validate = True
+
+                port = '0-65535'
+
+            elif int(port) in range(65535):
+                print(port)    
+                port_validate = True
+
+            else:
+
+                port = input(colors.FAIL + "\nInvalid input" + colors.ENDC + ". Please enter a valid port or port range (default: 0-65535): ")
+
+
+        except ValueError:
+
+            port = input(colors.FAIL + "\nInvalid input" + colors.ENDC + ". Please enter a valid port or port range (default: 0-65535): ")
+
+
+
+def port_scanner(host, port):
+    
+    host_sanitization(host, port)
+
+
+
+
+
+
+
 
 #########################################
 
@@ -196,6 +271,7 @@ def password_cracking(hash_file, dictionary_file):
 
 if input_tool_mode == '1':
 
+
     print(f"\n{colors.HEADER}                                   Password Generator!                        {colors.ENDC}")
     
     print(f"\n{colors.OKCYAN}               This tool will help you create a strong and secure password.                        {colors.ENDC}\n")
@@ -204,35 +280,36 @@ if input_tool_mode == '1':
 
     password_generator(long_passwd)
 
+
 elif input_tool_mode == '2':
+
+
+    print(f"\n{colors.HEADER}                                   Soon                        {colors.ENDC}")
+
+
+elif input_tool_mode == '3':
+
 
     print(f"\n{colors.HEADER}                                   Port Scanner                        {colors.ENDC}")
 
     print(f"\n{colors.HEADER}               This toll will help you to make a basic port scanning                        {colors.ENDC}")
 
-    host = input("Enter the host: ")
+    #host = input("Enter the target host: ")
+    port = input("Enter a valid port or port range (default: 0-65535): ")
+    port_sanitization(port)
+    #port_scanner(host, port)
 
-    for port in range(1, 1024):
-
-        if port_scanner(host, port):
-            
-            print(f"{colors.OKGREEN}[+] {host}:{port} is open      {colors.ENDC}")
-        
-        else:
-            
-            print(f"{colors.OKGREEN}[!] {host}:{port} is closed    {colors.ENDC}", end="\r")
-
-
-elif input_tool_mode == '3':
-
-    print(f"\n{colors.HEADER}                                   Soon                        {colors.ENDC}")
 
 elif input_tool_mode == '4':
 
+
     print(f"\n{colors.HEADER}                                   Password Cracker!                        {colors.ENDC}")
+
     print(f"\n{colors.OKCYAN}           This tool will help you crack passwords using a dictionary attack.                        {colors.ENDC}\n")
 
     hash_file = input(f"Enter the {colors.WARNING}SHA-256 hash{colors.ENDC} of the password you want to crack: ")
+
     dictionary_file = input(F"Enter the {colors.WARNING}path{colors.ENDC} to the dictionary file: ")
+
     password_cracking(hash_file, dictionary_file)
 
