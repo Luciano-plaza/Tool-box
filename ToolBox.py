@@ -3,6 +3,9 @@ import random
 import hashlib
 import os
 import socket
+import threading
+
+# Color settings
 
 class colors:
         HEADER = '\033[95m'
@@ -19,40 +22,41 @@ class colors:
 
 # Welcome message and tool selection
 
-print(f"\n{colors.HEADER}                               Welcome to the {colors.OKCYAN}ToolBox{colors.ENDC} {colors.HEADER}by{colors.ENDC} {colors.OKCYAN}C4cker{colors.ENDC}{colors.HEADER}!{colors.ENDC}                        {colors.ENDC}")
-print(f"\n{colors.HEADER}               Here you have a tool kit to start practicing basic pentesting knowledge.                        {colors.ENDC}")
-print(f"\n{colors.OKGREEN}                  Please follow the instructions and use this toolkit ethically.                        {colors.ENDC}")
-print("                                                                                      ")
-print("                                                                                      ")
-print("                    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣤⡴⠂⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀            ")
-print("                    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⣴⣿⠟⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀            ")
-print("                    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⣶⣿⣿⣿⡅⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⣀⣀⣀⣀⣀⣀⣀⣀⠀          ")
-print("                    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⣤⣤⣤⣤⣴⣿⣿⣿⣿⣯⣤⣶⣶⣾⣿⣶⣶⣿⣿⣿⣿⣿⡿⠿⠟⠛⠉⠉⠀⠀⠀⠀      ")
-print("                    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠐⠉⠁⠈⣹⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣶⣶⣶⠶⠶⠦⠄⠀⠀⠀⠀      ")
-print("                    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⣾⡿⠟⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣦⡀⠀⠀⠀⠀⠀⠀⠀       ")
-print("                    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣴⣾⣿⣟⣡⣤⣾⣿⣿⣿⣿⣿⣿⢏⠉⠛⣿⣿⣿⣿⣿⣿⣿⣿⣿⡻⢿⣿⣿⣦⡀⠀⠀⠀⠀       ")
-print("                    ⠀⠀⠀⠀⠀⣀⣤⣶⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠃⠈⠻⡄⠁⠀⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣆⠈⠙⠻⣿⣆⠀⠀⠀      ")
-print("                    ⠀⠀⠀⠀⢰⣿⣿⣿⣿⡿⠛⠉⠉⠉⠛⠛⠛⠛⠋⠁⠀⠀⠀⠁⠀⣠⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧⠀⠀⠈⠙⢧⠀⠀       ")
-print("                    ⠀⠀⠀⠀⠀⠙⠿⠟⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣀⣤⣴⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡆⠀⠀⠀⠀⠁⠀         ")
-print("                    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠙⢻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⠙⣿⣿⣿⣷⠀⠀⠀⠀⠀⠀⠀       ")
-print("                    ⠀⠀⠀⠀⠀⠀⠀⢀⣤⣴⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⠁⠀⠀⢹⣿⣿⣿⠀⠀⠀⠀⠀⠀⠀       ")
-print("                    ⠀⠀⠀⠀⢀⣤⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠟⠋⠁⠀⠀⠀⠀⠈⣿⣿⡟⠀⠀⠀⠀⠀⠀⠀      ")
-print("                    ⠀⠀⠀⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⠟⠛⢋⣩⡿⠿⠿⠟⠛⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⡟⠁⠀⠀⠀⠀⠀⠀⠀       ")
-print("                    ⠀⢀⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠠⣄⣀⡀⠀⠀⠀⠀⠀⠐⠉⠀⠀⠀⠀⠀⠀⠀⠀          ")
-print("                    ⠀⣾⣿⣿⣿⣿⣿⣿⣿⠻⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠻⢿⣶⣤⣄⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀          ")
-print("                    ⢰⣿⣿⣿⣿⣿⣿⣿⣿⡄⠙⢿⣄⠀⠀⠀⠀⠀⠀⠀⠀⠠⣤⣀⠀⠀⠀⠠⣄⣀⣀⡉⢻⣿⣿⣿⣶⣄⡀⠀⠀⠀⠀⠀⠀        ")
-print("                    ⠘⣿⣿⣿⣿⣿⣿⣿⣿⣿⣦⣄⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⣿⣿⣦⣤⣤⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣄⡀⠀⠀⠀⠀      ")
-print("                    ⠀⢻⡟⠙⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⠛⠛⠋⠉⠀⠀⢀⣠⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣦⡀⠀⠀    ")
-print("                    ⠀⠀⠃⠀⢹⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⣶⣶⣶⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡟⠁⠀⠀⠀⠀⠀⠈⠉⡿⢿⣿⣿⣿⣷⡄⠀     ")
-print("                    ⠀⠀⠀⠀⢸⣿⣿⡟⠙⠿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠿⠛⠛⣿⣿⣿⣿⣿⣧⣀⣀⡄⠀⢠⠀⠀⡀⠁⠘⣿⡿⣿⣿⣷⠀     ")
-print("                    ⠀⠀⠀⠀⢸⣿⡿⠁⠀⠀⠀⠙⠻⠿⣟⠻⢿⣿⣿⣿⣷⣦⡀⠀⠈⠻⢿⣿⣿⣭⣉⡉⠀⠀⠐⠀⠀⠀⠠⠀⠚⠀⠸⣿⣿⡄      ")
-print("                    ⠀⠀⠀⠀⣸⡟⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠛⢿⣿⣿⣦⡀⠀⠀⠀⠉⠉⠉⠉⠉⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⠁        ")
-print("                    ⠀⠀⠀⠠⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠙⢿⣿⣆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⡟⠀          ")
-print("                    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⢿⡆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢰⠟⠀⠀           ")
-print("                    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠁⠀⠀⠀           ")
-print("                    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀           ")
-print("                    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀           ")
+print(f"\n{colors.HEADER}                           Welcome to the {colors.OKCYAN}ToolBox{colors.ENDC} {colors.HEADER}by{colors.ENDC} {colors.OKCYAN}C4cker{colors.ENDC}{colors.HEADER}!{colors.ENDC}                        {colors.ENDC}")
+print(f"\n{colors.HEADER}           Here you have a tool kit to start practicing basic pentesting knowledge.                        {colors.ENDC}")
+print(f"\n{colors.OKGREEN}              Please follow the instructions and use this toolkit ethically.                        {colors.ENDC}")
+print("                                                                                  ")
+print("                                                                                  ")
+print("                ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣤⡴⠂⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀            ")
+print("                ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⣴⣿⠟⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀            ")
+print("                ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⣶⣿⣿⣿⡅⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⣀⣀⣀⣀⣀⣀⣀⣀⠀          ")
+print("                ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⣤⣤⣤⣤⣴⣿⣿⣿⣿⣯⣤⣶⣶⣾⣿⣶⣶⣿⣿⣿⣿⣿⡿⠿⠟⠛⠉⠉⠀⠀⠀⠀      ")
+print("                ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠐⠉⠁⠈⣹⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣶⣶⣶⠶⠶⠦⠄⠀⠀⠀⠀      ")
+print("                ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⣾⡿⠟⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣦⡀⠀⠀⠀⠀⠀⠀⠀       ")
+print("                ⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣴⣾⣿⣟⣡⣤⣾⣿⣿⣿⣿⣿⣿⢏⠉⠛⣿⣿⣿⣿⣿⣿⣿⣿⣿⡻⢿⣿⣿⣦⡀⠀⠀⠀⠀       ")
+print("                ⠀⠀⠀⠀⠀⣀⣤⣶⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠃⠈⠻⡄⠁⠀⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣆⠈⠙⠻⣿⣆⠀⠀⠀      ")
+print("                ⠀⠀⠀⠀⢰⣿⣿⣿⣿⡿⠛⠉⠉⠉⠛⠛⠛⠛⠋⠁⠀⠀⠀⠁⠀⣠⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧⠀⠀⠈⠙⢧⠀⠀       ")
+print("                ⠀⠀⠀⠀⠀⠙⠿⠟⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣀⣤⣴⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡆⠀⠀⠀⠀⠁⠀         ")
+print("                ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠙⢻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⠙⣿⣿⣿⣷⠀⠀⠀⠀⠀⠀⠀       ")
+print("                ⠀⠀⠀⠀⠀⠀⠀⢀⣤⣴⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⠁⠀⠀⢹⣿⣿⣿⠀⠀⠀⠀⠀⠀⠀       ")
+print("                ⠀⠀⠀⠀⢀⣤⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠟⠋⠁⠀⠀⠀⠀⠈⣿⣿⡟⠀⠀⠀⠀⠀⠀⠀      ")
+print("                ⠀⠀⠀⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⠟⠛⢋⣩⡿⠿⠿⠟⠛⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⡟⠁⠀⠀⠀⠀⠀⠀⠀       ")
+print("                ⠀⢀⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠠⣄⣀⡀⠀⠀⠀⠀⠀⠐⠉⠀⠀⠀⠀⠀⠀⠀⠀          ")
+print("                ⠀⣾⣿⣿⣿⣿⣿⣿⣿⠻⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠻⢿⣶⣤⣄⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀          ")
+print("                ⢰⣿⣿⣿⣿⣿⣿⣿⣿⡄⠙⢿⣄⠀⠀⠀⠀⠀⠀⠀⠀⠠⣤⣀⠀⠀⠀⠠⣄⣀⣀⡉⢻⣿⣿⣿⣶⣄⡀⠀⠀⠀⠀⠀⠀        ")
+print("                ⠘⣿⣿⣿⣿⣿⣿⣿⣿⣿⣦⣄⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⣿⣿⣦⣤⣤⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣄⡀⠀⠀⠀⠀      ")
+print("                ⠀⢻⡟⠙⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⠛⠛⠋⠉⠀⠀⢀⣠⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣦⡀⠀⠀    ")
+print("                ⠀⠀⠃⠀⢹⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⣶⣶⣶⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡟⠁⠀⠀⠀⠀⠀⠈⠉⡿⢿⣿⣿⣿⣷⡄⠀     ")
+print("                ⠀⠀⠀⠀⢸⣿⣿⡟⠙⠿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠿⠛⠛⣿⣿⣿⣿⣿⣧⣀⣀⡄⠀⢠⠀⠀⡀⠁⠘⣿⡿⣿⣿⣷⠀     ")
+print("                ⠀⠀⠀⠀⢸⣿⡿⠁⠀⠀⠀⠙⠻⠿⣟⠻⢿⣿⣿⣿⣷⣦⡀⠀⠈⠻⢿⣿⣿⣭⣉⡉⠀⠀⠐⠀⠀⠀⠠⠀⠚⠀⠸⣿⣿⡄      ")
+print("                ⠀⠀⠀⠀⣸⡟⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠛⢿⣿⣿⣦⡀⠀⠀⠀⠉⠉⠉⠉⠉⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⠁        ")
+print("                ⠀⠀⠀⠠⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠙⢿⣿⣆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⡟⠀          ")
+print("                ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⢿⡆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢰⠟⠀⠀           ")
+print("                ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠁⠀⠀⠀           ")
+print("                ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀           ")
+print("                ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀           ")
 
+##############################
 
 print("\nWhich tools do you want to use?\n")
 print(f"    {colors.FAIL}1){colors.ENDC} Password Generator")
@@ -76,6 +80,7 @@ while input_tool_mode not in ['1', '2', '3', '4']:
 ### Password Generator
 
 ###############################
+
 
 def password_generator(long_passwd):
         
@@ -113,7 +118,7 @@ def password_generator(long_passwd):
 
 #########################################
 
-### Network Analyzer
+#####       Network Analyzer        #####
 
 #########################################
 
@@ -121,9 +126,10 @@ def password_generator(long_passwd):
 
 #########################################
 
-### Port Scanner
+########       Port Scanner      ########
 
 #########################################
+
 
 def host_sanitization (host):
 
@@ -133,7 +139,7 @@ def host_sanitization (host):
     
         try:
 
-            # Verification variables 1.1.1.1
+            # Verification variables
         
             count_dots = host.count(".")
             check_host = host.split(".")
@@ -159,8 +165,11 @@ def host_sanitization (host):
 
             octet = 0
 
-            host = input(colors.FAIL + "\nInvalid input" + colors.ENDC + ". Please enter a valid IP: ")
+            host = input(colors.FAIL + "\nInvalid input" + colors.ENDC + ". Please enter a valid IP address: ")
 
+    return host
+
+###############################
 
 def port_sanitization(port):
 
@@ -172,6 +181,8 @@ def port_sanitization(port):
             
             port_range = '-' in port
             port_checker = port.split('-')
+
+            # Checking if a port range exists
 
             if port_range:
 
@@ -186,41 +197,94 @@ def port_sanitization(port):
 
                     port = input(colors.FAIL + "\nInvalid input" + colors.ENDC + ". Please enter a valid port or port range (default: 0-65535): ")
 
+            # Default value
+
             elif len(port) == 0:
 
                 port_validate = True
 
                 port = '0-65535'
 
+            # Unique port
+
             elif int(port) in range(65535):
-                print(port)    
+
                 port_validate = True
 
             else:
 
                 port = input(colors.FAIL + "\nInvalid input" + colors.ENDC + ". Please enter a valid port or port range (default: 0-65535): ")
 
+        # Error catcher
 
         except ValueError:
 
             port = input(colors.FAIL + "\nInvalid input" + colors.ENDC + ". Please enter a valid port or port range (default: 0-65535): ")
 
+    return port
 
+##############################
+
+def open_ports(host, port):
+
+    sock = socket.socket()
+    
+    try:
+        
+        sock.settimeout(0.2)
+        sock.connect((host, port))
+        
+        print(f"{colors.OKGREEN}[+]{colors.ENDC} Port {colors.OKGREEN}{port}{colors.ENDC} is open")
+
+        sock.close()
+
+    except:
+
+        pass
+
+
+##############################
 
 def port_scanner(host, port):
+
+    port_range = port.split('-')
+
+    if len(port_range) == 2:
+
+        start_port = int(port_range[0])
+        end_port = int(port_range[1])
+
+        try:
+
+            for port in range(start_port, end_port + 1):
+
+                thread = threading.Thread(target=open_ports, args=(host, port))
+
+                thread.start()
+
+        except KeyboardInterrupt:
+            print("\n Exiting Program!\n")
+
+        except socket.gaierror:
+            print("\n Hostname Could Not Be Resolved!")
+
+        except socket.error:
+            print(" Server not responding!")
+
     
-    host_sanitization(host, port)
+    else:
 
+        # This contain a bug(bug fix is needed)
 
+        thread = threading.Thread(target=open_ports, args=(host, port))
 
-
-
+        thread.start()
 
 
 
 #########################################
 
-### Password Cracker
+########    Password Cracker     ########
 
 #########################################
 
@@ -266,15 +330,19 @@ def password_cracking(hash_file, dictionary_file):
             
             print(f"{colors.FAIL}[-] {colors.ENDC}Password {colors.FAIL}not found{colors.ENDC} in the dictionary please try with a different dictionary file or check the hash you entered.\n")
 
+##############################
 
 # Header messages and calling functions
 
 if input_tool_mode == '1':
 
+    # Banner
 
     print(f"\n{colors.HEADER}                                   Password Generator!                        {colors.ENDC}")
     
     print(f"\n{colors.OKCYAN}               This tool will help you create a strong and secure password.                        {colors.ENDC}\n")
+
+    # Requesting data and calling functions
 
     long_passwd = input("Enter the desired password length: ")
 
@@ -283,29 +351,39 @@ if input_tool_mode == '1':
 
 elif input_tool_mode == '2':
 
+    # Banner
 
     print(f"\n{colors.HEADER}                                   Soon                        {colors.ENDC}")
 
 
+
 elif input_tool_mode == '3':
 
+    # Banner
 
     print(f"\n{colors.HEADER}                                   Port Scanner                        {colors.ENDC}")
 
-    print(f"\n{colors.HEADER}               This toll will help you to make a basic port scanning                        {colors.ENDC}")
+    print(f"\n{colors.HEADER}               This toll will help you to make a basic port scanning                        {colors.ENDC}\n")
 
-    #host = input("Enter the target host: ")
+    # Requesting data and calling functions
+
+    host = input("Enter the target host: ")
+
     port = input("Enter a valid port or port range (default: 0-65535): ")
-    port_sanitization(port)
-    #port_scanner(host, port)
+
+    port_scanner(host_sanitization(host), port_sanitization(port))
+
 
 
 elif input_tool_mode == '4':
 
+    # Banner
 
     print(f"\n{colors.HEADER}                                   Password Cracker!                        {colors.ENDC}")
 
     print(f"\n{colors.OKCYAN}           This tool will help you crack passwords using a dictionary attack.                        {colors.ENDC}\n")
+
+    # Requesting data and calling functions
 
     hash_file = input(f"Enter the {colors.WARNING}SHA-256 hash{colors.ENDC} of the password you want to crack: ")
 
