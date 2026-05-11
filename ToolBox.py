@@ -151,7 +151,7 @@ def host_sanitization (host):
 
             # Checking octet per octet
 
-            if count_dots == 3 and check_len == 4 and int(check_host[octet]) in range(225):
+            if count_dots == 3 and check_len == 4 and int(check_host[octet]) in range(255):
 
                     octet = octet + 1
 
@@ -205,12 +205,6 @@ def port_sanitization(port):
 
                 port = '0-65535'
 
-            # Unique port
-
-            elif int(port) in range(65535):
-
-                port_validate = True
-
             else:
 
                 port = input(colors.FAIL + "\nInvalid input" + colors.ENDC + ". Please enter a valid port or port range (default: 0-65535): ")
@@ -225,61 +219,70 @@ def port_sanitization(port):
 
 ##############################
 
+ports_list = []
+
 def open_ports(host, port):
 
     sock = socket.socket()
     
-    try:
+    sock.settimeout(0.5)
+    connection = sock.connect_ex((host, port))
+
+    if not connection:
         
-        sock.settimeout(0.2)
-        sock.connect((host, port))
-        
-        print(f"{colors.OKGREEN}[+]{colors.ENDC} Port {colors.OKGREEN}{port}{colors.ENDC} is open")
+        ports_list.append(port)
 
-        sock.close()
-
-    except:
-
-        pass
+    sock.close()
 
 
 ##############################
 
 def port_scanner(host, port):
 
+    # Port variables
+
     port_range = port.split('-')
+    start_port = int(port_range[0])
+    end_port = int(port_range[1])
+    threads = []
 
-    if len(port_range) == 2:
+    try:
 
-        start_port = int(port_range[0])
-        end_port = int(port_range[1])
+        print(f"\n[#] Scanning Target: {colors.OKBLUE}{host}{colors.ENDC} from port {colors.OKBLUE}{start_port}{colors.ENDC} to {colors.OKBLUE}{end_port}{colors.ENDC}\n")
 
-        try:
+        # Visiting each port with multi threads
 
-            for port in range(start_port, end_port + 1):
+        for port in range(start_port, end_port + 1):
 
-                thread = threading.Thread(target=open_ports, args=(host, port))
+            thread = threading.Thread(target=open_ports, args=(host, port))
 
-                thread.start()
+            thread.start()
+            threads.append(thread)
 
-        except KeyboardInterrupt:
-            print("\n Exiting Program!\n")
+        # Waiting threads
 
-        except socket.gaierror:
-            print("\n Hostname Could Not Be Resolved!")
+        for t in threads:
 
-        except socket.error:
-            print(" Server not responding!")
-
+            t.join()
     
-    else:
+    except KeyboardInterrupt:
+        print("\n Exiting Program!\n")
 
-        # This contain a bug(bug fix is needed)
+    except socket.gaierror:
+        print("\n Hostname Could Not Be Resolved!")
 
-        thread = threading.Thread(target=open_ports, args=(host, port))
+    except socket.error:
+        print(" Server not responding!")
 
-        thread.start()
+    # Ordering ports output
 
+    sorted_list = sorted(ports_list)
+
+    for port in sorted_list:
+
+        print(f"{colors.OKGREEN}[+]{colors.ENDC} Port {colors.OKGREEN}{port}{colors.ENDC} is open")
+    
+    print("\nDone!\n")
 
 
 #########################################
