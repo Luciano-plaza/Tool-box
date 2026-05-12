@@ -8,7 +8,7 @@
 - Desencriptador de contraseñas (hash SHA-256).
 
 >[!WARNING]
-> **Disclaimer:** Esta herramienta es sólo con fines educativos, no debe usarse para acciones ilegales o maliciosas
+> **Disclaimer:** Esta herramienta fue creada sólo con fines y uso educativos, no debe usarse para acciones ilegales o maliciosas
 
 ## 🚀 Inicio Rápido
 
