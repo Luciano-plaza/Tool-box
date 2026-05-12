@@ -34,3 +34,9 @@ cd Tool-box
 ```bash
 python3 Toolbox.py
 ```
+
+## Upcoming updates
+
+- Network analyzer option
+- Port scanner: uniuqe port option
+- Port scanner: Service version detection
