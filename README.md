@@ -20,6 +20,9 @@
 * Git (para clonar el repo).
 
 ### Instalación
+
+---
+
 1. Clona el repositorio:
 
 ```bash
@@ -32,6 +35,12 @@ git clone [https://github.com/Luciano-plaza/Tool-box.git](https://github.com/Luc
 cd Tool-box
 ```
 
+3. Requirements
+
+```
+pip install -r requirements.txt
+```
+
 3. Ejecuta el script:
 
 ```bash
@@ -40,6 +49,6 @@ python3 Toolbox.py
 
 ## Upcoming updates
 
-- Network analyzer option
 - Port scanner: uniuqe port option
 - Port scanner: Service version detection
+- Refactoring
