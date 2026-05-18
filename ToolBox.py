@@ -4,6 +4,8 @@ import hashlib
 import os
 import socket
 import threading
+import dns.resolver
+import whois
 
 # Color settings
 
@@ -122,6 +124,89 @@ def password_generator(long_passwd):
 
 #########################################
 
+
+# Check if the domain exists
+
+def is_registered(target_domain):
+
+    try:
+        
+        domain = whois.whois(target_domain)
+
+        # You can uncomment to see the entire domain structure
+
+        #print(domain)
+
+        print(f"\n{colors.BOLD}{target_domain}{colors.ENDC} is {colors.OKGREEN}Registered{colors.ENDC} in WHOIS.")
+
+        return True
+
+    except Exception:
+
+        if len(target_domain) > 0:
+
+            print(f"\n{colors.BOLD}{target_domain}{colors.ENDC} is {colors.FAIL}NOT registered{colors.ENDC} in WHOIS.\n")
+
+        else:
+
+            print(f"\nPlease enter a {colors.FAIL}Valid Domain{colors.ENDC}.\n")
+
+
+        return False
+
+
+# DNS enumeration of the domain
+
+def dns_analyzer(target_domain):
+
+    record_types = ["A", "AAAA", "CNAME", "MX", "NS", "SOA", "TXT"]
+
+    resolver = dns.resolver.Resolver()
+
+    for record in record_types:
+
+        # Perform DNS lookup for the specified domain and record type
+
+        try:
+
+            answers = resolver.resolve(target_domain, record)
+
+        except dns.resolver.NoAnswer:
+
+            continue
+
+        # Print the answers
+
+        print("\n" + "-" * 60)
+        
+        print(f"\n{colors.WARNING}{record}{colors.ENDC} records for {colors.OKGREEN}{target_domain}{colors.ENDC}: ")
+
+        for rdata in answers:
+            
+            print(f"\n    {rdata}")
+
+    print("\n" + "-" * 60)
+    
+
+# Request more information about the domain
+
+def dns_more_info(more_info):
+
+    if more_info.upper() == 'Y' or more_info.upper() == 'YES':
+    
+        whois_info = whois.whois(target_domain)
+
+        print("\n" + "-" * 60)
+
+        print(f"\n{colors.WARNING}Domain registrar:{colors.ENDC}", whois_info.registrar)
+
+        print(f"\n{colors.WARNING}WHOIS server:{colors.ENDC}", whois_info.whois_server)
+
+        print(f"\n{colors.WARNING}Emails:{colors.ENDC}", whois_info.emails)
+
+        print(f"\n{colors.WARNING}Domain creation date:{colors.ENDC}", whois_info.creation_date)
+
+        print(f"\n{colors.WARNING}Expiration date:{colors.ENDC}", whois_info.expiration_date)
 
 
 #########################################
@@ -341,7 +426,7 @@ if input_tool_mode == '1':
 
     # Banner
 
-    print(f"\n{colors.HEADER}                                   Password Generator!                        {colors.ENDC}")
+    print(f"\n{colors.FAIL}                                   Password Generator!                        {colors.ENDC}")
     
     print(f"\n{colors.OKCYAN}               This tool will help you create a strong and secure password.                        {colors.ENDC}\n")
 
@@ -356,17 +441,31 @@ elif input_tool_mode == '2':
 
     # Banner
 
-    print(f"\n{colors.HEADER}                                   Soon                        {colors.ENDC}")
+    print(f"\n\n{colors.FAIL}                                   DNS ANALYZER                        {colors.ENDC}\n\n")
+    
+    #thepythoncode.com
 
+    target_domain = input("Enter the target host: ")
 
+    while not is_registered(target_domain):
+
+        target_domain = input("Please enter a registered domain: ")
+    
+    dns_analyzer(target_domain)
+
+    more_info = input(f"\nDo you want {colors.UNDERLINE}more information{colors.ENDC} of that Host {colors.BOLD}(Y/N){colors.ENDC}? ")
+
+    dns_more_info(more_info)
+
+    print(f"\n\n                               {colors.OKGREEN}Done!{colors.ENDC}                              \n\n")
 
 elif input_tool_mode == '3':
 
     # Banner
 
-    print(f"\n{colors.HEADER}                                   Port Scanner                        {colors.ENDC}")
+    print(f"\n{colors.FAIL}                                   Port Scanner                        {colors.ENDC}")
 
-    print(f"\n{colors.HEADER}               This toll will help you to make a basic port scanning                        {colors.ENDC}\n")
+    print(f"\n{colors.OKCYAN}               This toll will help you to make a basic port scanning                        {colors.ENDC}\n")
 
     # Requesting data and calling functions
 
@@ -382,7 +481,7 @@ elif input_tool_mode == '4':
 
     # Banner
 
-    print(f"\n{colors.HEADER}                                   Password Cracker!                        {colors.ENDC}")
+    print(f"\n{colors.FAIL}                                   Password Cracker!                        {colors.ENDC}")
 
     print(f"\n{colors.OKCYAN}           This tool will help you crack passwords using a dictionary attack.                        {colors.ENDC}\n")
 
